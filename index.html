@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Personalidad de My Little Pony | Descubre tu Esencia en Equestria</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                colors: { mlp: {
+                    dark: '#140824', forest: '#25103b', moss: '#361754',
+                    glow: '#ffb3fa', gold: '#ffd700', mist: '#fcebfb', cyan: '#73fdff',
+                    pink: '#ff66c4', purple: '#a042ff'
+                }},
+                fontFamily: { sans: ['Inter', 'sans-serif'] }
+            }}
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #140824;
+            color: #fcebfb;
+            overflow-x: hidden;
+        }
+        #bgCanvas { user-select: none; -webkit-user-select: none; }
+
+        .font-cinzel { font-family: 'Cinzel', serif; }
+
+        .glass-panel {
+            background: rgba(37, 16, 59, 0.78);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 179, 250, 0.22);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+        }
+        .glass-button {
+            background: rgba(54, 23, 84, 0.65);
+            border: 1px solid rgba(255, 179, 250, 0.3);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-button:hover, .glass-button:active {
+            background: rgba(255, 179, 250, 0.25);
+            border-color: rgba(255, 179, 250, 0.75);
+            transform: translateY(-2px);
+            box-shadow: 0 0 18px rgba(255, 179, 250, 0.45);
+        }
+        .glass-button.selected {
+            background: rgba(255, 179, 250, 0.45);
+            border-color: #ffb3fa;
+            box-shadow: 0 0 22px rgba(255, 179, 250, 0.7);
+            color: #ffffff;
+        }
+        .glass-button:focus-visible {
+            outline: 2px solid #ffb3fa;
+            outline-offset: 3px;
+        }
+
+        #bgCanvas {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0; pointer-events: auto;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(20, 8, 36, 0.8); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 179, 250, 0.35); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 179, 250, 0.7); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .screen-enter { animation: fadeInUp 320ms cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .animate-pulse { animation: none !important; }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between relative overflow-y-auto">
+
+    <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+    <div class="relative z-10 min-h-full flex flex-col justify-between p-4 sm:p-6 md:p-8 max-w-4xl mx-auto w-full pointer-events-none">
+
+        <!-- HEADER -->
+        <header class="flex justify-between items-center py-3 px-5 rounded-2xl glass-panel w-full pointer-events-auto mb-6">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-wand-magic-sparkles text-mlp-glow text-xl sm:text-2xl animate-pulse" aria-hidden="true"></i>
+                <h1 class="font-cinzel text-lg sm:text-xl font-bold tracking-wider text-mlp-mist">EQUESTRIA <span class="text-mlp-glow">SOUL RESONANCE (SOUL EATER)</span></h1>
+            </div>
+            <div id="chapterBadge" class="hidden text-xs sm:text-sm font-medium px-3 py-1 rounded-full bg-mlp-moss/80 border border-mlp-glow/30 text-mlp-glow" aria-live="polite">
+                Capítulo 1
+            </div>
+        </header>
+
+        <!-- MAIN APP -->
+        <main id="appContainer" class="flex-grow flex items-center justify-center w-full my-auto pointer-events-auto">
+
+            <!-- SCREEN 1: INTRO -->
+            <section id="introScreen" class="w-full glass-panel rounded-3xl p-6 sm:p-10 text-center max-w-2xl mx-auto space-y-6">
+                <div class="inline-block p-4 rounded-full bg-mlp-moss/50 border border-mlp-glow/30 mb-2">
+                    <i class="fa-solid fa-horse-head text-4xl text-mlp-glow" aria-hidden="true"></i>
+                </div>
+                <h2 class="font-cinzel text-2xl sm:text-4xl font-bold text-white tracking-wide">
+                    ¿Qué personaje de My Little Pony eres?
+                </h2>
+                <p class="text-sm sm:text-base text-mlp-mist/80 leading-relaxed max-w-lg mx-auto">
+                    En la vida hay cosas importantes, y esta es una de ellas. Saber que lolipony eres
+                </p>
+                <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button id="startBtn" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass-button text-mlp-glow font-semibold text-lg flex items-center justify-center space-x-3 group">
+                        <span>Iniciar Test (100 Preguntas)</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform" aria-hidden="true"></i>
+                    </button>
+                    <button id="quickTestBtn" class="w-full sm:w-auto px-6 py-4 rounded-2xl glass-button text-mlp-mist/80 font-medium text-sm hover:text-white">
+                        Test Rápido (30 Preguntas)
+                    </button>
+                </div>
+                <div class="text-xs text-mlp-mist/50 pt-2 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-sparkles" aria-hidden="true"></i>
+                    <span>Mueve el cursor o toca la pantalla para esparcir chispas especiales (down).</span>
+                </div>
+            </section>
+
+            <!-- SCREEN 2: QUIZ -->
+            <section id="quizScreen" class="hidden w-full glass-panel rounded-3xl p-5 sm:p-8 max-w-2xl mx-auto flex-col justify-between min-h-[480px] shadow-2xl">
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center text-xs sm:text-sm font-semibold tracking-wider text-mlp-mist/70">
+                        <span id="chapterTitle" class="text-mlp-glow">Sección I</span>
+                        <span id="questionCounter" class="bg-mlp-moss/80 px-3 py-1 rounded-full border border-mlp-glow/20 text-mlp-glow" aria-live="polite">001 / 100</span>
+                    </div>
+                    <div class="w-full bg-mlp-dark/80 rounded-full h-2.5 p-0.5 border border-mlp-glow/20 overflow-hidden">
+                        <div id="progressBar" class="bg-gradient-to-r from-mlp-pink via-mlp-glow to-mlp-cyan h-1.5 rounded-full transition-all duration-300 w-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+                    </div>
+                </div>
+
+                <div class="my-8 text-center px-2 sm:px-6">
+                    <h3 id="questionText" class="text-lg sm:text-2xl font-medium text-white leading-relaxed min-h-[80px] flex items-center justify-center" aria-live="polite">
+                        Cargando pregunta...
+                    </h3>
+                </div>
+
+                <div class="space-y-3">
+                    <p class="text-center text-xs text-mlp-mist/60 uppercase tracking-widest font-medium">Selecciona tu nivel de acuerdo</p>
+                    <div class="grid grid-cols-5 gap-2 sm:gap-3" role="group" aria-label="Nivel de acuerdo del 1 al 5">
+                        <button type="button" class="scale-btn glass-button p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center space-y-1 group" data-value="1" aria-label="1, en desacuerdo">
+                            <span class="text-xs sm:text-sm font-bold group-hover:text-mlp-glow">1</span>
+                            <span class="text-[10px] text-mlp-mist/60 text-center hidden sm:block">En desacuerdo</span>
+                        </button>
+                        <button type="button" class="scale-btn glass-button p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center space-y-1 group" data-value="2" aria-label="2, algo en desacuerdo">
+                            <span class="text-xs sm:text-sm font-bold group-hover:text-mlp-glow">2</span>
+                            <span class="text-[10px] text-mlp-mist/60 text-center hidden sm:block">Algo desacuerdo</span>
+                        </button>
+                        <button type="button" class="scale-btn glass-button p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center space-y-1 group" data-value="3" aria-label="3, neutral">
+                            <span class="text-xs sm:text-sm font-bold group-hover:text-mlp-glow">3</span>
+                            <span class="text-[10px] text-mlp-mist/60 text-center hidden sm:block">Neutral</span>
+                        </button>
+                        <button type="button" class="scale-btn glass-button p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center space-y-1 group" data-value="4" aria-label="4, algo de acuerdo">
+                            <span class="text-xs sm:text-sm font-bold group-hover:text-mlp-glow">4</span>
+                            <span class="text-[10px] text-mlp-mist/60 text-center hidden sm:block">Algo de acuerdo</span>
+                        </button>
+                        <button type="button" class="scale-btn glass-button p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center space-y-1 group" data-value="5" aria-label="5, totalmente de acuerdo">
+                            <span class="text-xs sm:text-sm font-bold group-hover:text-mlp-glow">5</span>
+                            <span class="text-[10px] text-mlp-mist/60 text-center hidden sm:block">Totalmente de acuerdo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-6 border-t border-mlp-glow/10 mt-6">
+                    <button id="prevBtn" type="button" class="px-4 py-2 rounded-xl glass-button text-xs sm:text-sm text-mlp-mist/70 hover:text-white flex items-center space-x-2 disabled:opacity-30 disabled:pointer-events-none">
+                        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                        <span>Anterior</span>
+                    </button>
+                    <span class="text-[11px] text-mlp-glow/60 italic" aria-hidden="true">Se honesto, no decepciones a las mailiruponi</span>
+                </div>
+            </section>
+
+            <!-- SCREEN 3: RESULT -->
+            <section id="resultScreen" class="hidden w-full max-w-3xl mx-auto space-y-6">
+
+                <div id="dossierCard" class="glass-panel rounded-3xl p-6 sm:p-10 border border-mlp-glow/30 space-y-8 bg-mlp-dark/90">
+
+                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-mlp-glow/20 pb-6 gap-4 text-center sm:text-left">
+                        <div class="flex flex-col sm:flex-row items-center gap-4">
+                            <div class="w-24 h-24 rounded-2xl overflow-hidden bg-mlp-moss/50 border border-mlp-glow/30 flex-shrink-0 shadow-lg shadow-mlp-glow/20">
+                                <img id="resultImage" src="" alt="Retrato del personaje" class="w-full h-full object-cover" />
+                            </div>
+                            <div>
+                                <span class="text-xs uppercase tracking-widest text-mlp-glow/80 font-semibold">Ficha de Armonía de Equestria</span>
+                                <h2 id="resultName" class="font-cinzel text-3xl sm:text-4xl font-bold text-white mt-1" aria-live="polite">—</h2>
+                                <p id="resultFilm" class="text-sm text-mlp-mist/70 italic">—</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center sm:items-end">
+                            <div class="text-3xl sm:text-4xl font-bold text-mlp-glow font-cinzel" id="matchPercentage">—</div>
+                            <span class="text-[11px] text-mlp-mist/60">Afinidad de Elemento</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="text-xs uppercase tracking-wider text-mlp-glow mb-1 font-semibold">Esencia &amp; Personalidad</h4>
+                                <p id="resultDescription" class="text-sm text-mlp-mist/90 leading-relaxed">—</p>
+                            </div>
+                            <div class="pt-2">
+                                <h4 class="text-xs uppercase tracking-wider text-mlp-glow mb-2 font-semibold">Rasgos Dominantes</h4>
+                                <div id="topTraits" class="flex flex-wrap gap-2"></div>
+                            </div>
+                            <div class="pt-2">
+                                <h4 class="text-xs uppercase tracking-wider text-mlp-glow mb-1 font-semibold">Lección de Amistad</h4>
+                                <p id="resultQuote" class="text-xs italic text-mlp-mist/70 border-l-2 border-mlp-glow pl-3 py-1">—</p>
+                            </div>
+                        </div>
+
+                        <div class="w-full flex flex-col items-center justify-center">
+                            <div class="w-full max-w-[280px] sm:max-w-[320px] aspect-square relative">
+                                <canvas id="radarChart" aria-label="Gráfico radar comparativo de tu personalidad"></canvas>
+                            </div>
+                            <span class="text-[10px] text-mlp-mist/50 mt-2">Vector de 10 Dimensiones de la Magia</span>
+                        </div>
+                    </div>
+
+                    <div class="text-center pt-4 border-t border-mlp-glow/10 text-[10px] text-mlp-mist/40 font-cinzel">
+                        MY LITTLE PONY PSYCHOLOGICAL VECTOR MATCH • 10 DIMENSIONS
+                    </div>
+                </div>
+
+                <!-- Otros ponis afines -->
+                <div id="otherEchoes" class="hidden glass-panel rounded-3xl p-5 sm:p-6 border border-mlp-glow/20">
+                    <h3 class="text-xs uppercase tracking-wider text-mlp-glow mb-3 font-semibold">
+                        Otros espíritus afines en Equestria
+                    </h3>
+                    <div id="otherEchoesList" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button id="downloadBtn" type="button" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl glass-button text-mlp-glow font-semibold text-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-download" aria-hidden="true"></i>
+                        <span>Guardar Ficha en PNG</span>
+                    </button>
+                    <button id="restartBtn" type="button" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl glass-button text-mlp-mist font-medium text-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                        <span>Repetir Test</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="py-3 text-center text-[11px] text-mlp-mist/40 pointer-events-auto">
+            Hecho por un intp jaja yo
+        </footer>
+    </div>
+
+    <!-- CODE SCRIPT INTEGRADO -->
+    <script>
+    /* ============================================================
+       BASE DE DATOS DE PERSONAJES DE MY LITTLE PONY
+       Dimensiones (10):
+       0: Empatía (Amistad), 1: Naturaleza (Tierra/Animales), 2: Resiliencia (Valor), 
+       3: Curiosidad (Estudio/Magia), 4: Espiritualidad (Destino/Armonía), 
+       5: Lealtad, 6: Independencia (Autonomía), 7: Serenidad (Paz), 
+       8: Creatividad (Arte/Alegría), 9: Sombra (Caos/Rebeldía/Redención)
+       ============================================================ */
+    const MLP_CHARACTERS = [
+        {
+            name: "Twilight Sparkle",
+            film: "Princesa de la Amistad",
+            desc: "Eres una persona sumamente analítica, organizada y dedicada al estudio y la superación. Te encanta tener planes detallados y listas para todo. Tu mayor reto es controlar el estrés cuando las cosas no salen según el libro.",
+            quote: "¡Hay un libro sobre esto y he preparado un organizador de 15 pasos!",
+            image: "https://preview.redd.it/what-character-from-another-franchise-do-you-think-twilight-v0-rumwffho23wf1.jpeg?auto=webp&s=d0028c18152647caeb3df39d432661d08832b20f",
+            vector: [0.9, 0.5, 0.8, 1.0, 0.8, 0.9, 0.5, 0.6, 0.7, 0.4]
+        },
+        {
+            name: "Pinkie Pie",
+            film: "Elemento de la Risa",
+            desc: "Tu energía es contagiosa e inagotable. Tu meta principal en la vida es ver sonreír a los demás y celebrar cada instante. Eres espontáneo, extremadamente creativo y posees una intuición casi mágica para la diversión.",
+            quote: "¡Una fiesta con globos y pastel es la solución para cualquier día gris!",
+            image: "https://i.redd.it/l23n1fd81j9d1.jpg",
+            vector: [1.0, 0.4, 0.7, 0.5, 0.6, 0.9, 0.4, 0.3, 1.0, 0.8]
+        },
+        {
+            name: "Rainbow Dash",
+            film: "Elemento de la Lealtad",
+            desc: "Audaz, competitiva y directa. Te apasiona la velocidad, ser el mejor en lo que haces y defender a tus amigos a capa y espada. Aunque a veces pareces orgulloso, tu lealtad a los tuyos jamás tambalea.",
+            quote: "¡Voy a hacerlo un 20% más genial de lo que nadie imaginó!",
+            image: "https://static.wikia.nocookie.net/mlp/images/6/60/Rainbow_Dash_ID_T3E7.png/revision/latest?cb=20150302214756&path-prefix=es",
+            vector: [0.6, 0.5, 1.0, 0.5, 0.4, 1.0, 0.9, 0.3, 0.7, 0.6]
+        },
+        {
+            name: "Fluttershy",
+            film: "Elemento de la Amabilidad",
+            desc: "Tierna, paciente y dulce. Tienes una afinidad natural y profunda con el mundo animal y los seres vulnerables. Prefieres la paz y los ambientes tranquilos, pero cuando tus seres queridos están en riesgo, descubres una fuerza interior formidable.",
+            quote: "Por favor... sé amable con los animales y con el corazón de los demás.",
+            image: "https://static.wikia.nocookie.net/mlp/images/f/fd/Fluttershy_Perfil_S1E17.png/revision/latest?cb=20131215231615&path-prefix=es",
+            vector: [1.0, 1.0, 0.6, 0.4, 0.8, 0.9, 0.4, 1.0, 0.6, 0.2]
+        },
+        {
+            name: "Rarity",
+            film: "Elemento de la Generosidad",
+            desc: "Sofisticada, elegante y llena de talento artístico. Buscas transformar el mundo a través de la belleza y la creatividad. No dudas en compartir tu trabajo, tu tiempo y tus ideas para hacer brillar a tus amigos.",
+            quote: "¡La verdadera elegancia proviene de dar con el corazón abierto!",
+            image: "https://upload.wikimedia.org/wikipedia/en/b/ba/Rarity_in_S1E19.png?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+            vector: [0.8, 0.4, 0.7, 0.7, 0.6, 0.8, 0.6, 0.5, 1.0, 0.4]
+        },
+        {
+            name: "Applejack",
+            film: "Elemento de la Honestidad",
+            desc: "Trabajadora incansable, directa y honesta. Valoras la tradición, la familia y el esfuerzo genuino sobre las apariencias. Eres el pilar de estabilidad y confianza en el que todos se apoyan en los momentos de crisis.",
+            quote: "La honestidad es lo primero, y una promesa hecha en la granja se cumple siempre.",
+            image: "https://thumb.wikimedia.org/wikipedia/en/thumb/3/33/Applejack_in_S1E13.png/250px-Applejack_in_S1E13.png?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail",
+            vector: [0.8, 0.9, 1.0, 0.4, 0.6, 1.0, 0.7, 0.8, 0.5, 0.3]
+        },
+        {
+            name: "Starlight Glimmer",
+            film: "Consejera y Guiadora",
+            desc: "Inteligente, con una mentalidad estratégica brillante y en constante evolución. Has aprendido de tus propios errores del pasado y ahora ayudas a otros a sanar y encontrar su propio equilibrio sin prejuicios.",
+            quote: "El pasado nos enseña, pero lo que hacemos hoy es lo que nos define.",
+            image: "https://static.wikia.nocookie.net/mlp/images/b/b1/Starlight_Glimmer_ID_T6E2.png/revision/latest/scale-to-width-down/270?cb=20160329011954&path-prefix=es",
+            vector: [0.7, 0.3, 0.8, 0.9, 0.7, 0.8, 0.8, 0.5, 0.6, 0.9]
+        },
+        {
+            name: "Discord",
+            film: "Espíritu del Caos y la Excentricidad",
+            desc: "Impredecible, sumamente ingenioso y amante de lo inusual. Desafías las normas convencionales y prefieres ver la vida desde perspectivas totalmente locas y desafiantes, aportando la chispa que rompe la monotonía.",
+            quote: "¡Un toque de caos hace que la realidad sea mil veces más divertida!",
+            image: "https://static.wikia.nocookie.net/p__/images/b/ba/Discord_MLP.png/revision/latest/scale-to-width-down/1200?cb=20190830083516&path-prefix=protagonist",
+            vector: [0.5, 0.6, 0.7, 0.8, 0.5, 0.6, 1.0, 0.3, 1.0, 1.0]
+        },
+        {
+            name: "Sunset Shimmer",
+            film: "Guía de la Empatía y el Corazón",
+            desc: "Resiliente, perseverante y con un liderazgo natural extraordinario. Tras transformar su propia vida, demuestra una comprensión única de las emociones ajenas y la valentía para defender la armonía.",
+            quote: "No importa dónde empezaste, sino el camino de bondad que eliges construir hoy.",
+            image: "https://preview.redd.it/what-is-sunsets-special-talent-v0-j0d7n3v1slde1.jpeg?width=640&crop=smart&auto=webp&s=72e066514f51f815d8da7cb523622d77d79eb25b",
+            vector: [0.9, 0.4, 0.9, 0.8, 0.7, 0.9, 0.7, 0.6, 0.8, 0.6]
+        },
+        {
+            name: "Princesa Celestia",
+            film: "Guía Solar y Rectora",
+            desc: "Serena, sabia, compasiva y paciente. Guias a los demás mediante el estímulo positivo en lugar de la imposición, comprendiendo que el aprendizaje más valioso requiere tiempo y margen para cometer errores.",
+            quote: "Confía en tu propia luz interior; incluso la noche más oscura da paso al sol.",
+            image: "https://static.wikia.nocookie.net/mlp/images/0/03/411px-Princess_Celestia_ID_S4E01.png/revision/latest?cb=20140611215244&path-prefix=es",
+            vector: [0.9, 0.7, 0.9, 0.8, 1.0, 0.9, 0.8, 1.0, 0.7, 0.3]
+        }
+    ];
+
+    const PRIMARY_NAMES = new Set(MLP_CHARACTERS.map(c => c.name));
+
+    const DIMENSIONS = [
+        'Empatía', 'Naturaleza', 'Resiliencia', 'Curiosidad', 'Espiritualidad',
+        'Lealtad', 'Independencia', 'Serenidad', 'Creatividad', 'Sombra'
+    ];
+
+    const WEIGHTS = [1.0, 1.0, 1.2, 0.8, 0.9, 1.1, 1.0, 0.8, 0.9, 1.3];
+    const WEIGHT_SUM = WEIGHTS.reduce((s, w) => s + w, 0);
+
+    const CHAPTERS = [
+        "Sección I: El Espejo de la Amistad",
+        "Sección II: La Voz de los Campos y Animales",
+        "Sección III: El Temple y la Valentía",
+        "Sección IV: La Chispa de la Ciencia y Magia",
+        "Sección V: La Armonía del Destino",
+        "Sección VI: Lazos Inquebrantables",
+        "Sección VII: El Camino Autónomo",
+        "Sección VIII: La Paz Interior",
+        "Sección IX: El Fuego del Arte y la Alegría",
+        "Sección X: El Espectro del Caos y Redención"
+    ];
+
+    /* ============================================================
+       BANCO DE 100 PREGUNTAS COMPLETO (10 por dimensión)
+       ============================================================ */
+    const RAW_QUESTIONS = [
+        // ── Empatía (d=0) ──
+        { t: "Me importa genuinamente conocer y comprender las emociones de las personas que me rodean.", d: 0 },
+        { t: "Siento una profunda compasión incluso por quienes cometen grandes errores o han tomado mal camino.", d: 0 },
+        { t: "Suelo actuar como mediador pacífico cuando surge un conflicto entre mis amigos.", d: 0 },
+        { t: "Me llena de alegría auténtica ver que las personas que quiero logran superar sus miedos.", d: 0 },
+        { t: "Escucho con paciencia y sin prisa a quien necesita desahogarse conmigo.", d: 0 },
+        { t: "Procuro no juzgar con dureza las debilidades o torpezas de los demás.", d: 0 },
+        { t: "Me preocupa la armonía y el bienestar emocional de toda mi comunidad.", d: 0 },
+        { t: "A veces me resulta agotador que las personas se tomen todo de forma tan sentimental.", d: 0, r: true },
+        { t: "Cuando alguien rompe a llorar cerca de mí, me incomoda y prefiero alejarme.", d: 0, r: true },
+        { t: "Los problemas o sufrimientos de los demás no son mi responsabilidad.", d: 0, r: true },
+
+        // ── Naturaleza (d=1) ──
+        { t: "Siento una conexión especial e intuitiva al estar con animales y rodeado de naturaleza.", d: 1 },
+        { t: "Creo que la sociedad debería vivir con mayor respeto y humildad frente al entorno natural.", d: 1 },
+        { t: "Me parte el corazón ver la destrucción irresponsable de los espacios verdes o del campo.", d: 1 },
+        { t: "Disfruto profundamente cuidar seres vivos, cultivar plantas o alimentar a los animales.", d: 1 },
+        { t: "Me motiva la idea de defender la fauna y conservar los bosques o campos de mi región.", d: 1 },
+        { t: "Observar el cambio de estación o escuchar la lluvia me transmite una serenidad única.", d: 1 },
+        { t: "Prefiero mil veces los paisajes al aire libre antes que los espacios cerrados y artificiales.", d: 1 },
+        { t: "Los animales y el mundo natural me resultan indiferentes en mi vida diaria.", d: 1, r: true },
+        { t: "Me resulta molesto ensuciarme o interactuar directamente con la naturaleza salvaje.", d: 1, r: true },
+        { t: "Pienso que la importancia que se le da a la ecología y a los animales está muy exagerada.", d: 1, r: true },
+
+        // ── Resiliencia (d=2) ──
+        { t: "Cuando enfrento una gran adversidad, me fortalezco y me enfoco aún más en resolverla.", d: 2 },
+        { t: "No me rindo fácilmente aunque todo el panorama parezca estar en mi contra.", d: 2 },
+        { t: "Puedo asumir responsabilidades muy pesadas en silencio con tal de proteger a quienes quiero.", d: 2 },
+        { t: "Superar momentos difíciles en el pasado me ha convertido en una persona más sabia.", d: 2 },
+        { t: "Acepto los desafíos complejos como oportunidades invaluables para demostrar mi temple.", d: 2 },
+        { t: "El trabajo honesto, arduo y constante le da un sentido real a mis días.", d: 2 },
+        { t: "Confío firmemente en mi fuerza interior para salir adelante ante cualquier tormenta.", d: 2 },
+        { t: "Cuando las cosas se complican de más, tiendo a rendirme y buscar el camino fácil.", d: 2, r: true },
+        { t: "Prefiero esquivar los retos que requieren un esfuerzo o disciplina a largo plazo.", d: 2, r: true },
+        { t: "Suelo quejarme constantemente cuando las circunstancias se vuelven exigentes.", d: 2, r: true },
+
+        // ── Curiosidad (d=3) ──
+        { t: "Siento una pasión enorme por aprender cosas nuevas e investigar temas complejos a fondo.", d: 3 },
+        { t: "Disfruto leer, estudiar u organizar información simplemente por el placer de saber más.", d: 3 },
+        { t: "Me atrae descifrar cómo funcionan las cosas, las teorías científicas o los misterios mágicos.", d: 3 },
+        { t: "Me considero una persona meticulosa a la que le gusta hacer listas, planes y guías.", d: 3 },
+        { t: "Busco expandir constantemente mis horizontes intelectuales y culturales.", d: 3 },
+        { t: "Me fascina sumergirme en libros voluminosos llenos de detalles o datos precisos.", d: 3 },
+        { t: "Encuentro una gran satisfacción en resolver acertijos, rompecabezas o códigos lógicos.", d: 3 },
+        { t: "Pasar tiempo estudiando u organizando cosas teóricas me parece aburrido o inútil.", d: 3, r: true },
+        { t: "Las explicaciones largas y los análisis detallados me impacientan rápidamente.", d: 3, r: true },
+        { t: "Prefiero actuar por impulso antes que consultar o investigar de qué se trata.", d: 3, r: true },
+
+        // ── Espiritualidad (d=4) ──
+        { t: "Confío en mi intuición o corazonada cuando debo tomar decisiones trascendentales.", d: 4 },
+        { t: "Siento que existe una conexión o propósito invisible que entrelaza los destinos de las personas.", d: 4 },
+        { t: "Acepto con asombro que hay maravillas en la vida que la razón pura no puede explicar.", d: 4 },
+        { t: "Encuentro un valor profundo en las tradiciones o pequeños rituales que unen a los amigos.", d: 4 },
+        { t: "Siento una sincera gratitud por los pequeños milagros y momentos cotidianos.", d: 4 },
+        { t: "Creo que el universo tiende a buscar un equilibrio cósmico si actuamos con buena fe.", d: 4 },
+        { t: "Siento que cada individuo tiene un talento o 'marca' especial destinado a florecer.", d: 4 },
+        { t: "Solo creo en aquello que puedo medir, ver y comprobar con fría lógica.", d: 4, r: true },
+        { t: "Considero que las intuiciones o presentimientos son meras coincidencias causales.", d: 4, r: true },
+        { t: "Las ideas sobre el destino o la armonía universal me parecen fantasías sin sentido.", d: 4, r: true },
+
+        // ── Lealtad (d=5) ──
+        { t: "Jamás le daría la espalda a un verdadero amigo, sin importar cuán peligrosa sea la situación.", d: 5 },
+        { t: "Cumplo mis promesas sin vacilar, aun cuando cumplirlas implique un gran costo personal.", d: 5 },
+        { t: "La fidelidad a mis amigos y a mis valores morales está por encima del éxito rápido.", d: 5 },
+        { t: "Defiendo con firmeza y valentía a quienes sufren injusticias o no pueden defenderse.", d: 5 },
+        { t: "Considero la amistad sincera y el respeto mutuo como los tesoros más valiosos.", d: 5 },
+        { t: "Construyo mis relaciones personales sobre una base de confianza transparente e inquebrantable.", d: 5 },
+        { t: "Siento el compromiso ético de respaldar la reputación y el honor de mi círculo cercano.", d: 5 },
+        { t: "Suelo cambiar de amigos con facilidad si mis intereses o metas cambian.", d: 5, r: true },
+        { t: "Las promesas son relativas y se pueden romper si resulta conveniente.", d: 5, r: true },
+        { t: "En un momento crítico, es razonable que cada quien piense únicamente en salvarse a sí mismo.", d: 5, r: true },
+
+        // ── Independencia (d=6) ──
+        { t: "Valoro enormemente mi espacio a solas para pensar, recargar energía y reflexionar.", d: 6 },
+        { t: "Prefiero intentar resolver mis problemas por mi cuenta antes que pedir ayuda de inmediato.", d: 6 },
+        { t: "Tomo decisiones basadas en mi propio criterio sin dejarme llevar por modas o presiones.", d: 6 },
+        { t: "Aprecio la libertad de trazar mi propio camino por encima de la comodidad de las rutinas.", d: 6 },
+        { t: "No me asusta sobresalir, ser diferente o defender posturas poco populares.", d: 6 },
+        { t: "Disfruto explorando nuevos rumbos sin depender del acompañamiento constante de otros.", d: 6 },
+        { t: "No me da miedo romper con esquemas preestablecidos para buscar mi verdadera identidad.", d: 6 },
+        { t: "Busco la aprobación constante de los demás para sentirme seguro de lo que hago.", d: 6, r: true },
+        { t: "Prefiero que personas con más autoridad tomen las decisiones importantes por mí.", d: 6, r: true },
+        { t: "Me siento ansioso e inseguro cuando paso periodos prolongados sin compañía.", d: 6, r: true },
+
+        // ── Serenidad (d=7) ──
+        { t: "Encuentro una paz inmensa en los momentos de silencio, calma y desaceleración.", d: 7 },
+        { t: "Mantengo la cabeza fría y la compostura cuando estalla el caos a mi alrededor.", d: 7 },
+        { t: "Prefiero los entornos pacíficos e íntimos frente al bullicio de las grandes multitudes.", d: 7 },
+        { t: "Tengo la paciencia necesaria para esperar a que los procesos maduren a su propio ritmo.", d: 7 },
+        { t: "Suelo transmitir serenidad y alivio a las personas que están alteradas o ansiosas.", d: 7 },
+        { t: "Valoro más la tranquilidad de mi mente que tener siempre la razón o ganar discusiones.", d: 7 },
+        { t: "Disfruto enormemente de las pausas tranquilas para contemplar el paisaje o descansar.", d: 7 },
+        { t: "Me irrito con facilidad cuando las cosas no se resuelven de forma inmediata.", d: 7, r: true },
+        { t: "Necesito estar rodeado de ruido, prisa o emoción constante para no aburrirme.", d: 7, r: true },
+        { t: "Pierdo el control o el buen juicio cuando las situaciones se salen de control.", d: 7, r: true },
+
+        // ── Creatividad (d=8) ──
+        { t: "Uso mi imaginación para idear soluciones coloridas, divertidas o fuera de lo común.", d: 8 },
+        { t: "Expresar mi creatividad (en arte, diseño, música o fiesta) es vital para sentirme bien.", d: 8 },
+        { t: "Me encanta buscar formas de sorprender gratamente a otros con detalles hechos por mí.", d: 8 },
+        { t: "Encuentro belleza e inspiración en la estética, la moda, los colores o los sonidos.", d: 8 },
+        { t: "Tengo la chispa para improvisar con éxito cuando las circunstancias cambian de repente.", d: 8 },
+        { t: "Disfruto contagiar entusiasmo, risas y buena vibración en cualquier reunión.", d: 8 },
+        { t: "Me fascina diseñar objetos, prendas o manualidades con un toque único y personal.", d: 8 },
+        { t: "Me siento incómodo cuando no hay un manual o reglas exactas a seguir.", d: 8, r: true },
+        { t: "Considero que la creatividad y el arte son pasatiempos poco prácticos.", d: 8, r: true },
+        { t: "Me cuesta trabajo imaginar alternativas originales ante un problema común.", d: 8, r: true },
+
+        // ── Sombra (d=9) ──
+        { t: "Reconozco que dentro de mí coexisten contradicciones, impulsos traviesos o rebeldes.", d: 9 },
+        { t: "A veces he sentido la tentación de desafiar las reglas rígidas solo por ver qué pasa.", d: 9 },
+        { t: "Entiendo lo que significa equivocarse feo en el pasado y luchar por redimirse.", d: 9 },
+        { t: "Acepto que la vida tiene matices grises y que nadie es 100% perfecto ni malvado.", d: 9 },
+        { t: "Me atrae lo impredecible, la magia antigua o lo insólito que rompe la monotonía.", d: 9 },
+        { t: "Comprendo la tristeza o la envidia como emociones humanas que se deben transformar.", d: 9 },
+        { t: "Sé lo que se siente ponerse una 'máscara' ante el mundo para ocultar mis dudas.", d: 9 },
+        { t: "Pienso que las reglas deben obedecerse ciegamente sin cuestionar su origen.", d: 9, r: true },
+        { t: "Me incomodan las personas extravagantes, caóticas o que no se comportan 'normal'.", d: 9, r: true },
+        { t: "Pienso que la gente que se equivoca una vez nunca merece una segunda oportunidad.", d: 9, r: true }
+    ];
+
+    function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    const perDim = Array.from({ length: 10 }, () => []);
+    RAW_QUESTIONS.forEach(q => perDim[q.d].push(q));
+    const rawQuestionsData = [];
+    perDim.forEach(arr => {
+        shuffle(arr).forEach(q => rawQuestionsData.push(q));
+    });
+    rawQuestionsData.forEach((q, i) => { q.chapter = Math.floor(i / 10); });
+
+    /* ============================================================
+       CANVAS Y EFECTOS VISUALES DE MAGIA ESTELAR
+       ============================================================ */
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const pointer = { x: -1000, y: -1000, isTouch: false };
+
+    window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }, { passive: true });
+
+    const updatePointer = (e) => {
+        if (e.touches && e.touches.length > 0) {
+            pointer.x = e.touches[0].clientX;
+            pointer.y = e.touches[0].clientY;
+            pointer.isTouch = true;
+        } else {
+            pointer.x = e.clientX;
+            pointer.y = e.clientY;
+            pointer.isTouch = false;
+        }
+    };
+    window.addEventListener('mousemove', updatePointer, { passive: true });
+    window.addEventListener('touchstart', updatePointer, { passive: true });
+    window.addEventListener('touchmove', updatePointer, { passive: true });
+    window.addEventListener('touchend', () => { pointer.x = -1000; pointer.y = -1000; }, { passive: true });
+
+    class MagicParticle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.size = Math.random() * 3.5 + 1;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.alpha = Math.random() * 0.7 + 0.3;
+            const colors = ['#ffb3fa', '#73fdff', '#ffd700', '#ff66c4', '#a042ff'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.pulse = Math.random() * Math.PI * 2;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.pulse += 0.03;
+            if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+                this.reset();
+            }
+            const dx = this.x - pointer.x;
+            const dy = this.y - pointer.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 130) {
+                this.x += dx * 0.04;
+                this.y += dy * 0.04;
+            }
+        }
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha * (0.6 + Math.sin(this.pulse) * 0.4);
+            ctx.fillStyle = this.color;
+            ctx.shadowColor = this.color;
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    const particleCount = Math.min(50, Math.max(20, Math.floor((width * height) / 22000)));
+    const particles = Array.from({ length: particleCount }, () => new MagicParticle());
+
+    function animateCanvas() {
+        ctx.clearRect(0, 0, width, height);
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+        bgGrad.addColorStop(0, '#0d041a');
+        bgGrad.addColorStop(0.5, '#140824');
+        bgGrad.addColorStop(1, '#25103b');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, width, height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animateCanvas);
+    }
+    animateCanvas();
+
+    /* ============================================================
+       CONTROLADOR DEL TEST
+       ============================================================ */
+    const introScreen = document.getElementById('introScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const chapterBadge = document.getElementById('chapterBadge');
+    const questionText = document.getElementById('questionText');
+    const questionCounter = document.getElementById('questionCounter');
+    const chapterTitle = document.getElementById('chapterTitle');
+    const progressBar = document.getElementById('progressBar');
+    const prevBtn = document.getElementById('prevBtn');
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let userAnswers = [];
+    let isAdvancing = false;
+    let myRadarChart = null;
+
+    function showScreen(el, hideEls) {
+        hideEls.forEach(h => { h.classList.add('hidden'); h.classList.remove('screen-enter', 'flex'); });
+        el.classList.remove('hidden');
+        el.classList.add('screen-enter');
+        if (el === quizScreen) el.classList.add('flex');
+    }
+
+    function startQuiz(isFull) {
+        if (isFull) {
+            currentQuestions = rawQuestionsData.slice();
+        } else {
+            const byDim = Array.from({ length: 10 }, () => []);
+            rawQuestionsData.forEach(q => byDim[q.d].push(q));
+            const picked = [];
+            byDim.forEach(arr => {
+                shuffle(arr).slice(0, 3).forEach(q => picked.push(q));
+            });
+            currentQuestions = shuffle(picked);
+        }
+
+        currentIndex = 0;
+        userAnswers = new Array(currentQuestions.length).fill(null);
+
+        showScreen(quizScreen, [introScreen, resultScreen]);
+        chapterBadge.classList.remove('hidden');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = currentQuestions[currentIndex];
+        questionText.innerText = q.t;
+
+        const pad = n => n.toString().padStart(3, '0');
+        questionCounter.innerText = `${pad(currentIndex + 1)} / ${pad(currentQuestions.length)}`;
+
+        const cIdx = Math.min(q.chapter, 9);
+        chapterTitle.innerText = CHAPTERS[cIdx];
+        chapterBadge.innerText = `Sección ${cIdx + 1}`;
+
+        const pct = Math.round(((currentIndex + 1) / currentQuestions.length) * 100);
+        progressBar.style.width = `${pct}%`;
+        progressBar.setAttribute('aria-valuenow', pct);
+
+        document.querySelectorAll('.scale-btn').forEach(btn => {
+            const val = parseInt(btn.getAttribute('data-value'), 10);
+            btn.classList.toggle('selected', userAnswers[currentIndex] === val);
+        });
+
+        prevBtn.disabled = currentIndex === 0;
+    }
+
+    function answerAndAdvance(val) {
+        if (isAdvancing) return;
+        isAdvancing = true;
+        userAnswers[currentIndex] = val;
+        document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+        const chosenBtn = document.querySelector(`.scale-btn[data-value="${val}"]`);
+        if (chosenBtn) chosenBtn.classList.add('selected');
+
+        setTimeout(() => {
+            if (currentIndex < currentQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                calculateResults();
+            }
+            isAdvancing = false;
+        }, 200);
+    }
+
+    document.querySelectorAll('.scale-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            answerAndAdvance(parseInt(btn.getAttribute('data-value'), 10));
+        });
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (isAdvancing) return;
+        if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (quizScreen.classList.contains('hidden')) return;
+        if (isAdvancing) return;
+        if (e.key >= '1' && e.key <= '5') {
+            e.preventDefault();
+            answerAndAdvance(parseInt(e.key, 10));
+        } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+            currentIndex--; renderQuestion();
+        }
+    });
+
+    /* ============================================================
+       CALCULOS DE AFINIDAD
+       ============================================================ */
+    function weightedDistance(a, b) {
+        let sum = 0;
+        for (let i = 0; i < 10; i++) {
+            const d = a[i] - b[i];
+            sum += WEIGHTS[i] * d * d;
+        }
+        return Math.sqrt(sum / WEIGHT_SUM);
+    }
+
+    function distanceToPct(dist) {
+        const raw = (1 - dist) * 100;
+        return Math.max(45, Math.min(99.9, raw));
+    }
+
+    function calculateResults() {
+        const sums = new Array(10).fill(0);
+        const counts = new Array(10).fill(0);
+
+        currentQuestions.forEach((q, idx) => {
+            let val = userAnswers[idx] || 3;
+            if (q.r) val = 6 - val;
+            const norm = (val - 1) / 4.0;
+            sums[q.d] += norm;
+            counts[q.d]++;
+        });
+
+        const userVector = sums.map((s, i) => counts[i] > 0 ? s / counts[i] : 0.5);
+
+        const results = MLP_CHARACTERS.map(c => ({
+            char: c,
+            dist: weightedDistance(userVector, c.vector)
+        })).sort((a, b) => a.dist - b.dist);
+
+        const primaryResults = results.filter(r => PRIMARY_NAMES.has(r.char.name));
+        const best = primaryResults[0] || results[0];
+
+        const others = primaryResults.slice(1, 4).map(r => ({
+            name: r.char.name,
+            image: r.char.image,
+            film: r.char.film,
+            pct: distanceToPct(r.dist).toFixed(1)
+        }));
+
+        displayResults(best.char, distanceToPct(best.dist).toFixed(1), userVector, others);
+    }
+
+    function displayResults(character, percentage, userVector, others) {
+        showScreen(resultScreen, [introScreen, quizScreen]);
+
+        document.getElementById('resultName').innerText = character.name;
+        document.getElementById('resultFilm').innerText = character.film;
+        document.getElementById('matchPercentage').innerText = `${percentage}%`;
+        document.getElementById('resultDescription').innerText = character.desc;
+        document.getElementById('resultQuote').innerText = `"${character.quote}"`;
+
+        const img = document.getElementById('resultImage');
+        img.alt = `Retrato de ${character.name}`;
+        img.src = character.image || '';
+        img.onerror = () => {
+            const initials = character.name.replace(/[^A-Za-zÀ-ÿ]/g, ' ').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+            img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                    <rect width="100" height="100" fill="#361754"/>
+                    <text x="50" y="62" font-family="serif" font-size="38" fill="#ffb3fa"
+                          text-anchor="middle" font-weight="bold">${initials}</text>
+                </svg>`
+            )}`;
+            img.onerror = null;
+        };
+
+        const topIdx = userVector
+            .map((val, idx) => ({ val, idx }))
+            .sort((a, b) => b.val - a.val)
+            .slice(0, 3);
+        document.getElementById('topTraits').innerHTML = topIdx.map(item => `
+            <span class="px-3 py-1 rounded-full bg-mlp-moss/80 text-xs border border-mlp-glow/30 text-mlp-glow font-medium">
+                ${DIMENSIONS[item.idx]}
+            </span>
+        `).join('');
+
+        const echoesEl = document.getElementById('otherEchoes');
+        const echoesList = document.getElementById('otherEchoesList');
+        if (echoesEl && echoesList && others.length) {
+            echoesList.innerHTML = others.map(o => `
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-mlp-moss/40 border border-mlp-glow/15">
+                    <img src="${o.image}" alt="" class="w-10 h-10 rounded-full object-cover border border-mlp-glow/30 flex-shrink-0"
+                         onerror="this.style.display='none'">
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-medium text-white truncate">${o.name}</p>
+                        <p class="text-[10px] text-mlp-glow/80">${o.pct}% de afinidad</p>
+                    </div>
+                </div>
+            `).join('');
+            echoesEl.classList.remove('hidden');
+        }
+
+        renderRadarChart(userVector, character.vector);
+    }
+
+    function renderRadarChart(userVector, matchVector) {
+        const chartEl = document.getElementById('radarChart');
+        if (typeof Chart === 'undefined') {
+            chartEl.parentElement.insertAdjacentHTML('beforeend',
+                '<p class="text-xs text-mlp-mist/60 text-center">No se pudo cargar el gráfico.</p>');
+            return;
+        }
+        if (myRadarChart) myRadarChart.destroy();
+
+        myRadarChart = new Chart(chartEl.getContext('2d'), {
+            type: 'radar',
+            data: {
+                labels: DIMENSIONS,
+                datasets: [
+                    { label: 'Tu Esencia', data: userVector.map(v => (v * 100).toFixed(0)),
+                      backgroundColor: 'rgba(255, 179, 250, 0.25)',
+                      borderColor: '#ffb3fa', borderWidth: 2,
+                      pointBackgroundColor: '#ffffff' },
+                    { label: 'Personaje', data: matchVector.map(v => (v * 100).toFixed(0)),
+                      backgroundColor: 'rgba(255, 215, 0, 0.15)',
+                      borderColor: '#ffd700', borderWidth: 1.5,
+                      borderDash: [4, 4], pointBackgroundColor: '#ffd700' }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: true,
+                animation: prefersReducedMotion ? false : { duration: 600 },
+                scales: { r: {
+                    angleLines: { color: 'rgba(255, 179, 250, 0.15)' },
+                    grid: { color: 'rgba(255, 179, 250, 0.12)' },
+                    pointLabels: { color: '#fcebfb', font: { size: 10, family: 'Inter' } },
+                    ticks: { display: false, stepSize: 20 },
+                    suggestedMin: 0, suggestedMax: 100
+                }},
+                plugins: { legend: { labels: { color: '#fcebfb', font: { size: 11, family: 'Inter' } } } }
+            }
+        });
+    }
+
+    /* EXPORTAR A PNG */
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+        if (typeof html2canvas === 'undefined') {
+            alert('No se pudo cargar la librería de exportación.');
+            return;
+        }
+        const card = document.getElementById('dossierCard');
+        html2canvas(card, { backgroundColor: '#140824', scale: 2 })
+            .then(canvas => {
+                const safeName = document.getElementById('resultName').innerText
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-zA-Z0-9]+/g, '_') || 'Pony';
+                const link = document.createElement('a');
+                link.download = `Equestria_Soul_${safeName}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            })
+            .catch(err => console.error('Error al exportar:', err));
+    });
+
+    /* EVENTOS GENERALES */
+    document.getElementById('startBtn').addEventListener('click', () => startQuiz(true));
+    document.getElementById('quickTestBtn').addEventListener('click', () => startQuiz(false));
+    document.getElementById('restartBtn').addEventListener('click', () => {
+        showScreen(introScreen, [quizScreen, resultScreen]);
+        document.getElementById('otherEchoes').classList.add('hidden');
+        chapterBadge.classList.add('hidden');
+    });
+    </script>
+</body>
+</html>
